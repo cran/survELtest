@@ -1,5 +1,5 @@
 
-sigma2_hat_overpj_k = function(t, fit, fitls, M_vec) {
+sigma2_hat_overpj_k = function(t, fit, fitls) {
     n = fit$n
     k = length(fitls)
     iter = 1:k

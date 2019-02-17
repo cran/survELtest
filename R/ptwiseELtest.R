@@ -47,18 +47,18 @@
 #' @export
 #' @importFrom stats quantile
 
-ptwiseELtest <- function(data, group_order = sort(unique(data[,3])), t1 = 0, t2 = Inf, sided = 2, nboot = 1000, alpha = 0.05, seed = 1011, nlimit = 200) {
+ptwiseELtest = function(data, group_order = sort(unique(data[,3])), t1 = 0, t2 = Inf, sided = 2, nboot = 1000, alpha = 0.05, seed = 1011, nlimit = 200) {
       k = length(unique(data[,3]))
     
     if (k != length(unique(group_order))){
         stop("Parameter \"group_order\" doesn't match the actual number of groups in your input data.")
     }
     if (k == 2){
-        at_ts <- neg2ELratio(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
-        boot_ptw <- apply(as.matrix(at_ts$neg2ELratio_bootstrap_at_ts[, at_ts$lowerbindx_boot:at_ts$upperbindx_boot]), 2, quantile, 1 - alpha)
+        at_ts = neg2ELratio(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
+        boot_ptw = apply(as.matrix(at_ts$neg2ELratio_bootstrap_at_ts[, at_ts$lowerbindx_boot:at_ts$upperbindx_boot]), 2, quantile, 1 - alpha)
     }else{
-        at_ts <- teststat(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
-        boot_ptw <- apply(as.matrix(at_ts$neg2ELratio_bootstrap_at_ts), 2, quantile, 1 - alpha)
+        at_ts = teststat(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
+        boot_ptw = apply(as.matrix(at_ts$neg2ELratio_bootstrap_at_ts), 2, quantile, 1 - alpha)
     }
     
     return(list(time_pts       = at_ts$ts,

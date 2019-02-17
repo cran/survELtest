@@ -88,31 +88,31 @@
 #' @export
 #' @importFrom stats quantile
 
-intELtest <- function(data, group_order = sort(unique(data[,3])), t1 = 0, t2 = Inf, sided = 2, nboot = 1000, wt = "p.event", alpha = 0.05, seed = 1011, nlimit = 200) {
+intELtest = function(data, group_order = sort(unique(data[,3])), t1 = 0, t2 = Inf, sided = 2, nboot = 1000, wt = "p.event", alpha = 0.05, seed = 1011, nlimit = 200) {
     k = length(unique(data[,3]))
     
     if (k != length(unique(group_order))){
         stop("Parameter \"group_order\" doesn't match the actual number of groups in your input data.")
     }
     if (k == 2){
-        at_ts <- neg2ELratio(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
+        at_ts = neg2ELratio(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
     }else{
-        at_ts <- teststat(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
+        at_ts = teststat(data, group_order, t1, t2, sided, nboot, alpha, details.return = TRUE, seed, nlimit)
     }
     
     if (is.null(at_ts)) return (NULL)
     if (wt == "p.event") {
-        critval  <- at_ts$int_dbarNtEL_SOcrit
-        teststat <- at_ts$inttest_dbarNt
-        pvalue   <- at_ts$p_value_inttest_dbarNt
+        critval  = at_ts$int_dbarNtEL_SOcrit
+        teststat = at_ts$inttest_dbarNt
+        pvalue   = at_ts$p_value_inttest_dbarNt
     } else if (wt == "dt") {
-        critval  <- at_ts$int_dtEL_SOcrit
-        teststat <- at_ts$inttest_dt
-        pvalue   <- at_ts$p_value_inttest_dt
+        critval  = at_ts$int_dtEL_SOcrit
+        teststat = at_ts$inttest_dt
+        pvalue   = at_ts$p_value_inttest_dt
     } else if (wt == "dF") {
-        critval  <- at_ts$int_dFEL_SOcrit
-        teststat <- at_ts$inttest_dF
-        pvalue   <- at_ts$p_value_inttest_dF
+        critval  = at_ts$int_dFEL_SOcrit
+        teststat = at_ts$inttest_dF
+        pvalue   = at_ts$p_value_inttest_dF
     }
     return (list(teststat = teststat, critval = critval, pvalue = pvalue))
 }
