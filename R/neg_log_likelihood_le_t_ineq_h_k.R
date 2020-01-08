@@ -1,5 +1,4 @@
 #' @importFrom nloptr nloptr
-
 neg_log_likelihood_le_t_ineq_h_k = function(t, fitls, M_vec,init_lambdas = rep(0, times = length(fitls)-1), maxeval = 10000) {
     k = length(fitls)
     iter = 1:k
@@ -26,68 +25,6 @@ neg_log_likelihood_le_t_ineq_h_k = function(t, fitls, M_vec,init_lambdas = rep(0
         }
     }
     init_weights = as.numeric(unlist(init_weights))
-    fnc_objective_h = function(h) {
-        lgth_d = unlist(lapply(iter, FUN =function(iter){
-            length(d[[iter]])
-        }))
-        hh = lapply(iter, FUN =function(iter){
-            h[ (1 + cumsum(lgth_d[1:k])[iter] - lgth_d[iter])  : cumsum(lgth_d[1:k])[iter] ]
-        })
-        sum_elmts = unlist(lapply(iter, FUN =function(iter){
-            c(sum(d[[iter]]*log(hh[[iter]])),sum(product(A[[iter]], log(1-hh[[iter]]))))
-        }))
-        out = sum(sum_elmts)
-        return (-out)
-    }
-    gnc_objective_h = function(h) {
-        lgth_d = unlist(lapply(iter, FUN =function(iter){
-            length(d[[iter]])
-        }))
-        hh = lapply(iter, FUN =function(iter){
-            h[ (1 + cumsum(lgth_d[1:k])[iter] - lgth_d[iter])  : cumsum(lgth_d[1:k])[iter] ]
-        })
-        out = unlist(lapply(iter, FUN =function(iter){
-            division00(d[[iter]], hh[[iter]]) - division00(r[[iter]] - d[[iter]], 1 - hh[[iter]])
-        }))
-        return(-out)
-    }
-    constraints_h = function(h) {
-        lgth_d = unlist(lapply(iter, FUN =function(iter){
-            length(d[[iter]])
-        }))
-        hh = lapply(iter, FUN =function(iter){
-            h[ (1 + cumsum(lgth_d[1:k])[iter] - lgth_d[iter])  : cumsum(lgth_d[1:k])[iter] ]
-        })
-        out = unlist(lapply(iter_without_last, FUN =function(iter_without_last){
-            log(division00(prod((1 - hh[[iter_without_last+1]]) ^ M_vec[iter_without_last+1]), prod((1 - hh[[iter_without_last]]) ^ M_vec[iter_without_last])))
-        }))
-        return(out)
-    }
-    jac_constraints_h = function(h) {
-        lgth_d = unlist(lapply(iter, FUN =function(iter){
-            length(d[[iter]])
-        }))
-        hh = lapply(iter, FUN =function(iter){
-            h[ (1 + cumsum(lgth_d[1:k])[iter] - lgth_d[iter])  : cumsum(lgth_d[1:k])[iter] ]
-        })
-        out2D = lapply(iter_without_last,FUN =function(iter_without_last){
-            out = c()
-            if (iter_without_last != 1){
-                out = c(out, rep(0, length = cumsum(lgth_d[1:k])[iter_without_last-1]))
-            }
-            out = c(out,division00(M_vec[iter_without_last], 1 - hh[[iter_without_last]]), division00(-M_vec[iter_without_last+1], 1 - hh[[iter_without_last+1]]))
-            if (iter_without_last != k-1){
-                out = c(out,rep(0, length = cumsum(lgth_d[1:k])[k] - cumsum(lgth_d[1:k])[iter_without_last+1]))
-            }
-            return(out)
-        })
-        rslt = c()
-        for (i in iter_without_last){
-            rslt = rbind(rslt, out2D[[i]])
-        }
-        return(rslt)
-    }
-    
     lgth_d = unlist(lapply(iter, FUN =function(iter){
         length(d[[iter]])
     }))
@@ -96,9 +33,10 @@ neg_log_likelihood_le_t_ineq_h_k = function(t, fitls, M_vec,init_lambdas = rep(0
     nlopt = nloptr(x0 = init_weights, eval_f = fnc_objective_h, eval_grad_f = gnc_objective_h,
     lb = rep(0.0, times = cumsum(lgth_d[1:k])[k]),
     ub = rep(1.0, times = cumsum(lgth_d[1:k])[k]),
-    eval_g_ineq = constraints_h, eval_jac_g_ineq = jac_constraints_h, opts = opts_used)
+    eval_g_ineq = constraints_h, eval_jac_g_ineq = jac_constraints_h, opts = opts_used,
+    k = k, iter = iter, iter_without_last = iter_without_last, d = d, r = r, A = A, D = D, M_vec = M_vec)
     nlopt$Ds = D
-    nlopt$resultEEs = constraints_h(nlopt$solution)
+    nlopt$resultEEs = constraints_h(nlopt$solution, k, iter, iter_without_last, d, r, A, D, M_vec)
     lambda = c()
     lambda[1] = (d[[1]][1] / nlopt$solution[1] - r[[1]][1]) / M_vec[1]
     if (k > 2){

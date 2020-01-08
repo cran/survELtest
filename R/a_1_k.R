@@ -15,4 +15,4 @@ a_1_k = function(lambda, fit1, fit2, t, tilde_theta = 1, M_vec2) {
     denom = ((1 - h2) ^ M_vec2[2])[fit2$time <= t]
     
     return(division00(prod(num), prod(denom)) - tilde_theta)
-}  
+}

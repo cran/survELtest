@@ -20,4 +20,3 @@ neg_log_likelihood_le_t_glob_h_k = function(t, fitls, M_vec,init_lambdas = rep(0
     nlopt$lambdas = 1:(k-1) * 0
     return (nlopt)
 }
-

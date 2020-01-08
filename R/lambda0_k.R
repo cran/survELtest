@@ -1,5 +1,4 @@
 #' @importFrom stats uniroot
-
 lambda0_k = function(t, fit1, fit2, tilde_theta = 1, M_vec2) {
     out = 1:length(t) * 0
     for (i in 1:length(t)) {

@@ -15,7 +15,7 @@ and has the following columns:
 threearm
 }
 \description{
-The data frame \code{threearm} is obtained by perturbing the time-to-remission data 
+The data frame \code{threearm} is obtained by resampling from perturbed time-to-remission 
 from patients in a three-arm randomized clinical trial for the treatment of major depression. 
 See \code{\link{nocrossings}}, \code{\link{ptwiseELtest}} and \code{\link{supELtest}} for the application.
 }

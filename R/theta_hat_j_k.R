@@ -17,4 +17,4 @@ theta_hat_j_k = function(t, fit, fitls, M_vec) {
         out[i,] = mapply(out_func,iter)
     }
     return(out)
-}  
+}
